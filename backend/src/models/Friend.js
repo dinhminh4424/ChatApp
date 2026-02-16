@@ -24,6 +24,9 @@ const friendSchema = new mongoose.Schema(
 
 // => Trước khi lưu so sánh 2 ID với nhau nào bé hơn thì cho là 1, nào lớn hơn thì cho là 2 => sẽ ko bị trùng
 friendSchema.pre("save", function (next) {
+  if (!this.userA || !this.userB) {
+    return;
+  }
   const userA = this.userA.toString();
   const userB = this.userB.toString();
 
@@ -31,7 +34,6 @@ friendSchema.pre("save", function (next) {
     this.userA = new mongoose.Types.ObjectId(userB);
     this.userB = new mongoose.Types.ObjectId(userA);
   }
-  next();
 });
 
 // Đảm bảo ko bị trùng truy vấn
