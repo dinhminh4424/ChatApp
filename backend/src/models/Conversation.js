@@ -72,7 +72,7 @@ const conversationSchema = new mongoose.Schema(
     ],
     lastMessage: { type: messageSchema, default: null },
     unReadCount: {
-      type: Map,
+      type: Map, // là {key, value} á
       of: Number,
       default: {},
     },

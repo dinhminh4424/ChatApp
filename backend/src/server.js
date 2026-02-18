@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv"; // Đọc file .env
 import cookieParser from "cookie-parser"; // Middleware để phân tích cookie
 import cors from "cors"; // Middleware để xử lý CORS
+import fs from "fs"; // Thư viện dùng để đọc nội dung củ tệp json
 
 dotenv.config(); // Khởi tạo dotenv để sử dụng biến môi trường từ file .env
 
