@@ -39,7 +39,7 @@ const MessageItem = ({
     <div
       className={cn(
         "flex gap-2 message-bounce mt-1",
-        message.isOwn ? "justify-end" : "justify-start",
+        message.isOwn ? "justify-end" : "justify-start  ",
       )}
     >
       {/* Avatar */}
@@ -57,7 +57,7 @@ const MessageItem = ({
       {/* Tin nhắn */}
       <div
         className={cn(
-          "max-w-sm lg:max-w-md space-y-1 flex flex-col",
+          "max-w-sm lg:max-w-md space-y-1 flex flex-col ",
           message.isOwn ? "items-end" : "items-start",
         )}
       >
@@ -66,7 +66,7 @@ const MessageItem = ({
             "p-3",
             message.isOwn
               ? "chat-bubble-sent border-0"
-              : "bg-chat-bubble-received",
+              : "bg-chat-bubble-received border-0",
           )}
         >
           <p className="text-sm leading-relaxed break-words">

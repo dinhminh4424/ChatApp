@@ -5,6 +5,8 @@ import { Server } from "socket.io"; // thư viện tạo kết nối realtime gi
 import http from "http"; // → module Node.js để tạo HTTP server
 import express from "express"; // → framework backend để xử lý API
 import { socketAuthMiddleware } from "../middlewares/socketMiddleware.js";
+import Message from "../models/Message.js";
+import conversationController from "../controllers/conversationController.js";
 
 // 2. Tạo app Express
 // Khởi tạo ứng dụng Express.
@@ -51,9 +53,27 @@ io.on("connection", async (socket) => {
     ` SOCKET.io [socket/index.js]: User ${user._id} - ${user.userName}  Kết Nối (online) Với: ${socket.id} `,
   ); // socket.id = ID duy nhất của client.
 
+  //  =================================================== ONLINE/OFFLINE =========================================================
   // online
   userOnline.set(user._id, socket.id);
   io.emit("online-users", Array.from(userOnline.keys())); // 👉 gửi danh sách user._id => ["us1", "us2"]
+
+  //  =================================================== END ONLINE/OFFLINE =====================================================
+
+  // =================================================== ROOM ============================================================
+  // Lấy danh sách hộp thoại của user Và tạo ROOM từ danh sách hộp thoại đoá
+  const conversationIds = await conversationController.getConversationForUser(
+    user._id,
+  );
+
+  // tạo đưa user vào room với id room là id của hộp thoại chat
+  conversationIds.forEach((conversitionId) => {
+    socket.join(conversitionId); // đưa socket hiện tại vào một phòng (room)
+  });
+
+  // mốt sau này gửi [io.to("c1").emit("new-message", message); ] trong controller
+
+  // =================================================== END ROOM ==========================================================
 
   // Lắng nghe sự kiện disconnect
 

@@ -207,6 +207,35 @@ class ConversationController {
       });
     }
   }
+
+  async getConversationForUser(userId) {
+    try {
+      if (!userId) {
+        console.log(
+          "conversationController [getConversationForUser]: Không có  userId: ",
+          userId,
+        );
+        return [];
+      }
+
+      const conversationId = await Conversation.find(
+        { "participants.userId": userId },
+        { _id: 1 },
+      );
+
+      return conversationId.map((conversation) => {
+        return conversation._id.toString();
+      });
+    } catch (error) {
+      console.log(
+        "conversationController [getConversationForUser]: Lỗi hệ thống khi lấy thông tin hộp thoại : ",
+        error,
+      );
+      return [];
+    }
+  }
+
+  async markAsScreen(req, res) {}
 }
 
 export default new ConversationController();

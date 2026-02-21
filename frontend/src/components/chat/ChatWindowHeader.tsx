@@ -14,8 +14,6 @@ const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
 
   const { onlineUsers } = useSocketStore();
 
-  console.log("onlineUsers: ", onlineUsers);
-
   let otherUser;
 
   chat =

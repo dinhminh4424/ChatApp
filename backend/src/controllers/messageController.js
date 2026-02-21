@@ -1,6 +1,10 @@
 import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
-import { updateConversationAfterCreateMessage } from "../utils/messageHelper.js";
+import { io } from "../socket/index.js";
+import {
+  emitNewMessage,
+  updateConversationAfterCreateMessage,
+} from "../utils/messageHelper.js";
 
 class MessageController {
   // Gửi tin nhắn Cá Nhân
@@ -72,6 +76,9 @@ class MessageController {
 
       await conversation.save();
 
+      // @ @ @ @ @ @ @ [SOCKET.IO] gửi emit xuống cho client
+      emitNewMessage(io, conversation, newMessage);
+
       return res.status(201).json({
         success: true,
         message: "Gửi tin nhắn thành công",
@@ -114,6 +121,9 @@ class MessageController {
       updateConversationAfterCreateMessage(conversation, newMessage);
 
       conversation.save();
+
+      // @ @ @ @ @ @ @ [SOCKET.IO] gửi emit xuống cho client
+      emitNewMessage(io, conversation, newMessage);
 
       return res.status(200).json({
         success: true,

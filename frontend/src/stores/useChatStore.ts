@@ -101,7 +101,7 @@ export const useChatStore = create<ChatState>()(
           set({ messageLoading: true });
 
           const activeConversation = get().activeConversationId;
-          const res = await chatService.sendDirectMessage(
+          await chatService.sendDirectMessage(
             recipientId,
             content,
             imgUrl,
@@ -126,11 +126,7 @@ export const useChatStore = create<ChatState>()(
         try {
           set({ messageLoading: true });
 
-          const res = await chatService.sendGroupMessage(
-            conversationId,
-            content,
-            imgUrl,
-          );
+          await chatService.sendGroupMessage(conversationId, content, imgUrl);
 
           set((state) => ({
             conversations: state.conversations.map((conversation) => {
@@ -144,6 +140,66 @@ export const useChatStore = create<ChatState>()(
           toast.error("Gửi tin nhắn Group thất bại: " + error);
         } finally {
           set({ messageLoading: false });
+        }
+      },
+      addMessage: async (message) => {
+        try {
+          const user = useAuthStore.getState().user;
+          if (!user) {
+            return;
+          }
+
+          const { fetchMessages } = get();
+
+          message.isOwn = message.senderId === user?._id;
+
+          const conversationId = message.conversationId;
+
+          let prevMessages = get().messages[conversationId]?.items ?? [];
+
+          // Do Khi nhấn vô hộp thoại thì mới cập nhật tin nhắn nên lức đầu sẽ ko có tin nhắn vậy nên cần fetch lại tin nhắn
+          // Nếu không thì người đối diện khi chưa nhấn vô hộp thoại sẽ chỉ có 1 tin nhắn mới nhất do emit
+
+          if (prevMessages.length === 0) {
+            await fetchMessages(conversationId);
+            prevMessages = get().messages[conversationId]?.items ?? [];
+          }
+
+          set((state) => {
+            if (prevMessages.some((m) => m._id === message._id)) {
+              // nếu trong prevMessages có tin nhắn mới rồi thì không cần thay đổi
+              return state;
+            }
+            return {
+              messages: {
+                ...state.messages,
+                [conversationId]: {
+                  items: [...prevMessages, message],
+                  hasMore: state.messages[conversationId].hasMore,
+                  nextCursor:
+                    state.messages[conversationId].nextCursor ?? undefined,
+                },
+              },
+            };
+          });
+        } catch (error) {
+          toast.error(
+            "Add tin nhắn thất bại! vui lòng load lại trang: " + error,
+          );
+        }
+      },
+
+      updateConversation: async (conversation) => {
+        try {
+          set((state) => ({
+            conversations: state.conversations.map((c) => {
+              return c._id === conversation._id ? { ...c, ...conversation } : c;
+            }),
+          }));
+        } catch (error) {
+          toast.error(
+            "Cập nhật hộp thoại thất bại! vui lòng load lại trang: " + error,
+          );
         }
       },
     }),

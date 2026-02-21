@@ -26,3 +26,16 @@ export const updateConversationAfterCreateMessage = (conversation, message) => {
     conversation.unReadCount.set(memberId, isSender ? 0 : prevCount + 1); // cập nhật unReadCount với {memberId, value}
   });
 };
+
+export const emitNewMessage = (io, conversation, message) => {
+  // tạo thông báo cho id phòng: [conversation._id] với [new-message] có giá trị là [{..........}]
+  io.to(conversation._id.toString()).emit("new-message", {
+    message,
+    conversation: {
+      _id: conversation._id,
+      lastMessage: conversation.lastMessage,
+      lastMessageAt: conversation.lastMessageAt,
+    },
+    unReadCounts: conversation.unReadCount,
+  });
+};
