@@ -121,7 +121,7 @@ class ConversationController {
         return {
           ...conversation.toObject(),
           participants: participants || {},
-          unReadCount: conversation.unReadCount || {},
+          unreadCounts: conversation.unReadCount || {},
         };
       });
 
@@ -178,9 +178,8 @@ class ConversationController {
 
       let messages = await Message.find(query)
         .sort({ createdAt: -1 })
-        .limit(Number(limit) + 1) // lấy hơn 1 để kiểm tra coi còn tin nữa không để phân trang
-        .populate("senderId", "displayName avatarUrl");
-
+        .limit(Number(limit) + 1); // lấy hơn 1 để kiểm tra coi còn tin nữa không để phân trang
+      // .populate("senderId", "_id displayName avatarUrl")
       let nextCursor = null;
       if (messages.length > Number(limit)) {
         const nextMessage = messages[messages.length - 1]; // lấy thằng mà limit + 1 á

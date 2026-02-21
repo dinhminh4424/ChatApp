@@ -38,7 +38,7 @@ class AuthController {
         userName,
         password: hashedPassword,
         email,
-        displayName: `${lastName} ${firstNames}`,
+        displayName: `${lastName} ${firstName}`,
       });
 
       await newUser.save();

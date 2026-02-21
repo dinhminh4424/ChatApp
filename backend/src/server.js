@@ -1,12 +1,14 @@
-import express from "express";
 import dotenv from "dotenv"; // Đọc file .env
+import express from "express";
 import cookieParser from "cookie-parser"; // Middleware để phân tích cookie
 import cors from "cors"; // Middleware để xử lý CORS
 import fs from "fs"; // Thư viện dùng để đọc nội dung củ tệp json
 
 dotenv.config(); // Khởi tạo dotenv để sử dụng biến môi trường từ file .env
 
-const app = express();
+import { app, server } from "./socket/index.js";
+
+// const app = express(); // ko cần nữa do dùng app của socket
 const PORT = process.env.PORT || 5000;
 
 // ============================================================= START Middleware  ====================================
@@ -44,7 +46,12 @@ app.use("/api", routers);
 import { connectDB } from "./libs/db.js";
 connectDB().then(() => {
   // Khởi động server
-  app.listen(PORT, () => {
+  // app.listen(PORT, () => {
+  //   console.log(`Server bắt đầu trên cổng ${PORT}`);
+  //   console.log(`http://localhost:${PORT}`);
+  // });
+
+  server.listen(PORT, () => {
     console.log(`Server bắt đầu trên cổng ${PORT}`);
     console.log(`http://localhost:${PORT}`);
   });

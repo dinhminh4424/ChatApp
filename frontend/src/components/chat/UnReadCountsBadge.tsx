@@ -1,0 +1,14 @@
+import React from "react";
+import { Badge } from "../ui/badge";
+
+const UnReadCountsBadge = ({ unReadCount }: { unReadCount: number }) => {
+  return (
+    <div className="pulse-ring absolute z-20 -top-1 -right-1">
+      <Badge className="size-5 flex items-center justify-center p-0 text-xs bg-gradient-chat border border-background">
+        {unReadCount > 9 ? "9+" : unReadCount}
+      </Badge>
+    </div>
+  );
+};
+
+export default UnReadCountsBadge;
